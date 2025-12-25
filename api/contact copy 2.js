@@ -9,13 +9,13 @@ function sendJson(res, status, obj) {
 }
 
 module.exports = async (req, res) => {
-
+  // Only allow POST
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return sendJson(res, 405, { ok: false, error: "Use POST" });
   }
 
-
+  // Parse body
   let body = {};
   try {
     body = typeof req.body === "string" ? JSON.parse(req.body) : (req.body || {});
@@ -25,8 +25,10 @@ module.exports = async (req, res) => {
 
   const { name, email, phone, service, message, website } = body;
 
+  // Honeypot spam protection
   if (website) return sendJson(res, 200, { ok: true });
 
+  // Validation
   if (!name || !email || !phone) {
     return sendJson(res, 400, {
       ok: false,
@@ -34,16 +36,20 @@ module.exports = async (req, res) => {
     });
   }
 
-  if (!process.env.RESEND_API_KEY || !process.env.MAIL_FROM || !process.env.MAIL_TO) {
-    return sendJson(res, 500, {
-      ok: false,
-      error: "Server email configuration error"
-    });
+  // Env validation
+  if (!process.env.RESEND_API_KEY) {
+    return sendJson(res, 500, { ok: false, error: "Missing RESEND_API_KEY" });
+  }
+  if (!process.env.MAIL_FROM) {
+    return sendJson(res, 500, { ok: false, error: "Missing MAIL_FROM" });
+  }
+  if (!process.env.MAIL_TO) {
+    return sendJson(res, 500, { ok: false, error: "Missing MAIL_TO" });
   }
 
   try {
-    const leadEmail = await resend.emails.send({
-      from: `HH Construction Group <${process.env.MAIL_FROM}>`,
+    const leadResult = await resend.emails.send({
+      from: process.env.MAIL_FROM,
       to: process.env.MAIL_TO,
       replyTo: email,
       subject: `New Quote Request: ${name}`,
@@ -55,52 +61,54 @@ module.exports = async (req, res) => {
         `Message:\n${message || "(no details provided)"}`
     });
 
-    if (leadEmail?.error) {
-      console.error("LEAD EMAIL ERROR:", leadEmail.error);
+    if (leadResult?.error) {
+      console.error("LEAD EMAIL ERROR:", leadResult.error);
       return sendJson(res, 500, {
         ok: false,
-        error: "Failed to send lead email"
+        error: leadResult.error.message || "Failed to send lead email"
       });
     }
 
-    const leadId = leadEmail?.data?.id;
-    if (!leadId) {
-      console.error("LEAD EMAIL NO ID:", leadEmail);
+    const id = leadResult?.data?.id;
+    if (!id) {
+      console.error("LEAD EMAIL NO ID:", leadResult);
       return sendJson(res, 500, {
         ok: false,
-        error: "Lead email sent but no ID returned"
+        error: "Lead email sent but no message ID returned"
       });
     }
 
     try {
-      await resend.emails.send({
-        from: `HH Construction Group <${process.env.MAIL_FROM}>`,
+      const autoReply = await resend.emails.send({
+        from: process.env.MAIL_FROM,
         to: email,
-        replyTo: process.env.MAIL_TO,
         subject: "We received your request ✅",
         text:
           `Hi ${name},\n\n` +
           `Thank you for contacting HH Construction Group Inc.\n\n` +
           `We’ve received your request and will contact you shortly.\n\n` +
-          `Here is a copy of your submission:\n\n` +
+          `Here’s a copy of what you sent:\n\n` +
           `Phone: ${phone}\n` +
-          `Project Type: ${service || "(not selected)"}\n\n` +
+          `Project Type: ${service || "(not selected)"}\n` +
           `Message:\n${message || "(no details provided)"}\n\n` +
-          `If you have additional details, feel free to reply to this email.\n\n` +
-          `— HH Construction Group Inc.\n` +
-          `Los Angeles, CA`
+          `If you need to add more details, just reply to this email.\n\n` +
+          `— HH Construction Group Inc.`
       });
+
+      if (autoReply?.error) {
+        console.error("AUTO-REPLY ERROR:", autoReply.error);
+      }
     } catch (autoErr) {
-      // Auto-reply failure should NOT break form success
-      console.error("AUTO-REPLY FAILED:", autoErr);
+      console.error("AUTO-REPLY THROW:", autoErr);
     }
-    return sendJson(res, 200, { ok: true, id: leadId });
+
+    return sendJson(res, 200, { ok: true, id });
 
   } catch (err) {
     console.error("CONTACT API ERROR:", err);
     return sendJson(res, 500, {
       ok: false,
-      error: "Email failed to send"
+      error: err?.message || "Email failed to send"
     });
   }
 };
