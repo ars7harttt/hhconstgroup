@@ -1,53 +1,30 @@
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-function sendJson(res, status, obj) {
-  res.statusCode = status;
-  res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify(obj));
-}
-
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
-    return sendJson(res, 405, { ok: false, error: "Use POST" });
-  }
-
-  // Vercel may give body as object or string depending on setup
-  let body = {};
-  try {
-    body = typeof req.body === "string" ? JSON.parse(req.body) : (req.body || {});
-  } catch {
-    return sendJson(res, 400, { ok: false, error: "Invalid JSON" });
-  }
-
-  const { name, email, phone, service, message, website } = body;
-
-  // Optional honeypot anti-spam
-  if (website) return sendJson(res, 200, { ok: true });
-
-  if (!name || !email || !phone) {
-    return sendJson(res, 4  code api/contact.js00, { ok: false, error: "Name, email, and phone are required." });
-  }
-
-  try {
-    await resend.emails.send({
-      from: process.env.MAIL_FROM, // e.g. "HH Construction <no-reply@hhconstructions.net>"
-      to: process.env.MAIL_TO,     // your receiving email
-      replyTo: email,
-      subject: `New Quote Request: ${name}`,
-      text:
-        `Name: ${name}\n` +
-        `Email: ${email}\n` +
-        `Phone: ${phone}\n` +
-        `Project Type: ${service || "(not selected)"}\n\n` +
-        `Message:\n${message || "(no details provided)"}`
-    });
-
-    return sendJson(res, 200, { ok: true });
-  } catch (err) {
-    console.error(err);
-    return sendJson(res, 500, { ok: false, error: "Email failed to send." });
-  }
-}
+module.exports = async (req, res) => {
+    try {
+      // CORS (optional but helpful)
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  
+      if (req.method === "OPTIONS") return res.status(200).end();
+  
+      if (req.method !== "POST") {
+        return res.status(405).json({ ok: false, error: "Use POST" });
+      }
+  
+      // Vercel usually parses JSON automatically when Content-Type is application/json
+      const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+  
+      const { name, email, message } = body || {};
+      if (!name || !email || !message) {
+        return res.status(400).json({ ok: false, error: "Missing fields" });
+      }
+  
+      // TEMP: just return success to prove function works
+      return res.status(200).json({ ok: true });
+    } catch (err) {
+      return res.status(500).json({
+        ok: false,
+        error: err?.message || "Server error",
+      });
+    }
+  };
