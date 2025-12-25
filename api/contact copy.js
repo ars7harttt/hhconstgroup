@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
     return sendJson(res, 405, { ok: false, error: "Use POST" });
   }
 
-  // Parse body
+  // Parse body (Vercel sometimes gives object, sometimes string)
   let body = {};
   try {
     body = typeof req.body === "string" ? JSON.parse(req.body) : (req.body || {});
@@ -25,10 +25,10 @@ module.exports = async (req, res) => {
 
   const { name, email, phone, service, message, website } = body;
 
-  // Honeypot spam protection
+  // Honeypot anti-spam (add <input name="website" style="display:none"> if you want)
   if (website) return sendJson(res, 200, { ok: true });
 
-  // Validation
+  // Basic validation
   if (!name || !email || !phone) {
     return sendJson(res, 400, {
       ok: false,
@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
     });
   }
 
-  // Env validation
+  // Env validation (helps debugging)
   if (!process.env.RESEND_API_KEY) {
     return sendJson(res, 500, { ok: false, error: "Missing RESEND_API_KEY" });
   }
@@ -48,10 +48,10 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const leadResult = await resend.emails.send({
-      from: process.env.MAIL_FROM,
-      to: process.env.MAIL_TO,
-      replyTo: email,
+    const result = await resend.emails.send({
+      from: process.env.MAIL_FROM, // e.g. "HH Construction <no-reply@hhconstructions.net>" OR "onboarding@resend.dev"
+      to: process.env.MAIL_TO,     // your inbox
+      replyTo: email,              // customer email
       subject: `New Quote Request: ${name}`,
       text:
         `Name: ${name}\n` +
@@ -61,51 +61,27 @@ module.exports = async (req, res) => {
         `Message:\n${message || "(no details provided)"}`
     });
 
-    if (leadResult?.error) {
-      console.error("LEAD EMAIL ERROR:", leadResult.error);
+    // Resend returns { data, error }
+    if (result?.error) {
+      console.error("RESEND ERROR OBJ:", result.error);
       return sendJson(res, 500, {
         ok: false,
-        error: leadResult.error.message || "Failed to send lead email"
+        error: result.error.message || "Resend error"
       });
     }
 
-    const id = leadResult?.data?.id;
+    const id = result?.data?.id;
     if (!id) {
-      console.error("LEAD EMAIL NO ID:", leadResult);
+      console.log("RESEND RAW RESULT:", result);
       return sendJson(res, 500, {
         ok: false,
-        error: "Lead email sent but no message ID returned"
+        error: "Resend response missing id (check logs)"
       });
-    }
-
-    try {
-      const autoReply = await resend.emails.send({
-        from: process.env.MAIL_FROM,
-        to: email,
-        subject: "We received your request ✅",
-        text:
-          `Hi ${name},\n\n` +
-          `Thank you for contacting HH Construction Group Inc.\n\n` +
-          `We’ve received your request and will contact you shortly.\n\n` +
-          `Here’s a copy of what you sent:\n\n` +
-          `Phone: ${phone}\n` +
-          `Project Type: ${service || "(not selected)"}\n` +
-          `Message:\n${message || "(no details provided)"}\n\n` +
-          `If you need to add more details, just reply to this email.\n\n` +
-          `— HH Construction Group Inc.`
-      });
-
-      if (autoReply?.error) {
-        console.error("AUTO-REPLY ERROR:", autoReply.error);
-      }
-    } catch (autoErr) {
-      console.error("AUTO-REPLY THROW:", autoErr);
     }
 
     return sendJson(res, 200, { ok: true, id });
-
   } catch (err) {
-    console.error("CONTACT API ERROR:", err);
+    console.error("RESEND THROW:", err);
     return sendJson(res, 500, {
       ok: false,
       error: err?.message || "Email failed to send"
