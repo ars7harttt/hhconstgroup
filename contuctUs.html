@@ -199,25 +199,43 @@
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
   
+      statusEl.textContent = "Sending...";
+  
       const payload = {
-        name: name.value,
-        email: email.value,
-        phone: phone.value,
-        service: service.value,
-        message: message.value
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        service: document.getElementById("service").value,
+        message: document.getElementById("message").value.trim()
       };
   
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+      // DEBUG (temporary)
+      console.log("Sending payload:", payload);
   
-      const data = await res.json();
-      statusEl.textContent = data.ok ? "Sent ✅" : data.error;
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+  
+        const data = await res.json();
+  
+        if (data.ok) {
+          statusEl.textContent = "Sent ✅ We’ll contact you shortly.";
+          form.reset();
+        } else {
+          statusEl.textContent = data.error || "Error sending message";
+        }
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = "Network error. Please try again.";
+      }
     });
   </script>
-  
+
 </body>
 </html>
 
