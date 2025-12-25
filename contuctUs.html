@@ -100,7 +100,7 @@
         <form
           class="contact-form"
           id="contactForm"
-          action="https://formspree.io/f/xyzvlgdo"
+          action="api/contact.js"
           method="POST"
         >
           <div class="form-group">
@@ -197,3 +197,33 @@
 
 
 
+
+  
+  <script>
+    const form = document.getElementById("contactForm");
+    const statusEl = document.getElementById("formStatus");
+  
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+  
+      const payload = {
+        name: name.value,
+        email: email.value,
+        phone: phone.value,
+        service: service.value,
+        message: message.value
+      };
+  
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+  
+      const data = await res.json();
+      statusEl.textContent = data.ok ? "Sent ✅" : data.error;
+    });
+  </script>
+
+</body>
+</html>

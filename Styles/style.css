@@ -446,6 +446,11 @@ body {
   justify-content: space-around;
 }
 
+.contact-info a {
+  text-decoration: none;
+  color: #f9fafb
+}
+
 .form-group {
   margin-bottom: 0.9rem;
 }
@@ -468,6 +473,12 @@ body {
   font-size: 0.95rem;
   outline: none;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.form-group textarea {
+  min-width: 100%;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .form-group input:focus,
