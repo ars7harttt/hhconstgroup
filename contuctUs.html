@@ -213,27 +213,29 @@
       console.log("Sending payload:", payload);
   
       try {
-        const res = await fetch("/api/contact", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payload)
-        });
-  
-        const data = await res.json();
-  
-        if (data.ok) {
-          statusEl.textContent = "Sent ✅ We’ll contact you shortly.";
-          form.reset();
-        } else {
-          statusEl.textContent = data.error || "Error sending message";
-        }
-      } catch (err) {
-        console.error(err);
-        statusEl.textContent = "Network error. Please try again.";
-      }
-    });
+  const result = await resend.emails.send({
+    from: process.env.MAIL_FROM,
+    to: process.env.MAIL_TO,
+    replyTo: email,
+    subject: `New Quote Request: ${name}`,
+    text:
+      `Name: ${name}\n` +
+      `Email: ${email}\n` +
+      `Phone: ${phone}\n` +
+      `Project Type: ${service || "(not selected)"}\n\n` +
+      `Message:\n${message || "(no details provided)"}`
+  });
+
+  console.log("RESEND RESULT:", result);
+
+  return sendJson(res, 200, { ok: true });
+} catch (err) {
+  console.error("RESEND ERROR:", err);
+  return sendJson(res, 500, {
+    ok: false,
+    error: err?.message || "Email failed"
+  });
+}
   </script>
 
 </body>
