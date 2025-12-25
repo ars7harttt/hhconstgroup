@@ -1,30 +1,32 @@
 module.exports = async (req, res) => {
-    try {
-      // CORS (optional but helpful)
-      res.setHeader("Access-Control-Allow-Origin", "*");
-      res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  try {
+    const result = await resend.emails.send({
+      from: process.env.MAIL_FROM,
+      to: process.env.MAIL_TO,
+      replyTo: email,
+      subject: `New Quote Request: ${name}`,
+      text:
+        `Name: ${name}\n` +
+        `Email: ${email}\n` +
+        `Phone: ${phone}\n` +
+        `Project Type: ${service || "(not selected)"}\n\n` +
+        `Message:\n${message || "(no details provided)"}`
+    });
   
-      if (req.method === "OPTIONS") return res.status(200).end();
+    console.log("RESEND SEND RESULT:", JSON.stringify(result));
   
-      if (req.method !== "POST") {
-        return res.status(405).json({ ok: false, error: "Use POST" });
-      }
-  
-      // Vercel usually parses JSON automatically when Content-Type is application/json
-      const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-  
-      const { name, email, message } = body || {};
-      if (!name || !email || !message) {
-        return res.status(400).json({ ok: false, error: "Missing fields" });
-      }
-  
-      // TEMP: just return success to prove function works
-      return res.status(200).json({ ok: true });
-    } catch (err) {
-      return res.status(500).json({
-        ok: false,
-        error: err?.message || "Server error",
-      });
+    // IMPORTANT: return the id so we can verify in Resend logs
+    const id = result?.data?.id || result?.id || null;
+    if (!id) {
+      return sendJson(res, 500, { ok: false, error: "Resend returned no message id" });
     }
-  };
+  
+    return sendJson(res, 200, { ok: true, id });
+  } catch (err) {
+    console.error("RESEND SEND ERROR:", err);
+    return sendJson(res, 500, {
+      ok: false,
+      error: err?.message || "Resend failed"
+    });
+  }
+}

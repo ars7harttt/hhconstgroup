@@ -226,21 +226,14 @@
       `Message:\n${message || "(no details provided)"}`
   });
 
-  console.log("RESEND RESULT:", result);
-
-  return sendJson(res, 200, { ok: true });
+  // result usually contains an id
+  return sendJson(res, 200, { ok: true, id: result?.data?.id || result?.id || null });
 } catch (err) {
   console.error("RESEND ERROR:", err);
-  return sendJson(res, 500, {
-    ok: false,
-    error: err?.message || "Email failed"
-  });
+  return sendJson(res, 500, { ok: false, error: err?.message || "Email failed" });
 }
   </script>
 
 </body>
 </html>
-
-
-
- 
+    }
