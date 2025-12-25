@@ -1,0 +1,24 @@
+{
+  "name": "hhconstgroup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ars7harttt/hhconstgroup.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ars7harttt/hhconstgroup/issues"
+  },
+  "homepage": "https://github.com/ars7harttt/hhconstgroup#readme",
+  "dependencies": {
+    "resend": "^6.6.0"
+  }
+}
