@@ -193,6 +193,45 @@
   <script src="./Scripts/script.js"></script>
 
   <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("contactForm");
+      const statusEl = document.getElementById("formStatus");
+  
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        statusEl.textContent = "Sending...";
+  
+        const payload = {
+          name: document.getElementById("name").value.trim(),
+          email: document.getElementById("email").value.trim(),
+          phone: document.getElementById("phone").value.trim(),
+          service: document.getElementById("service").value,
+          message: document.getElementById("message").value.trim()
+        };
+  
+        try {
+          const res = await fetch("/api/contact", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+  
+          const data = await res.json();
+  
+          if (data.ok) {
+            // ✅ REDIRECT HERE
+            window.location.href = "/redirected.html";
+          } else {
+            statusEl.textContent = data.error || "Something went wrong.";
+          }
+        } catch {
+          statusEl.textContent = "Network error. Please try again.";
+        }
+      });
+    });
+  </script>
+
+  <script>
     const form = document.getElementById("contactForm");
     const statusEl = document.getElementById("formStatus");
   
