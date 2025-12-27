@@ -9,12 +9,10 @@ function sendJson(res, status, obj) {
 }
 
 module.exports = async (req, res) => {
-
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return sendJson(res, 405, { ok: false, error: "Use POST" });
   }
-
 
   let body = {};
   try {
@@ -25,6 +23,7 @@ module.exports = async (req, res) => {
 
   const { name, email, phone, service, message, website } = body;
 
+  // Honeypot anti-spam
   if (website) return sendJson(res, 200, { ok: true });
 
   if (!name || !email || !phone) {
@@ -35,13 +34,17 @@ module.exports = async (req, res) => {
   }
 
   if (!process.env.RESEND_API_KEY || !process.env.MAIL_FROM || !process.env.MAIL_TO) {
-    return sendJson(res, 500, {
-      ok: false,
-      error: "Server email configuration error"
-    });
+    return sendJson(res, 500, { ok: false, error: "Server email configuration error" });
   }
 
+  // If AUTO_REPLY_FROM is not set, default to onboarding@resend.dev
+  const AUTO_REPLY_FROM = process.env.AUTO_REPLY_FROM || "onboarding@resend.dev";
+
   try {
+    /* ===============================
+       1) LEAD EMAIL (to you)
+       Uses your domain sender
+    =============================== */
     const leadEmail = await resend.emails.send({
       from: `HH Construction Group <${process.env.MAIL_FROM}>`,
       to: process.env.MAIL_TO,
@@ -57,26 +60,24 @@ module.exports = async (req, res) => {
 
     if (leadEmail?.error) {
       console.error("LEAD EMAIL ERROR:", leadEmail.error);
-      return sendJson(res, 500, {
-        ok: false,
-        error: "Failed to send lead email"
-      });
+      return sendJson(res, 500, { ok: false, error: leadEmail.error.message || "Failed to send lead email" });
     }
 
     const leadId = leadEmail?.data?.id;
     if (!leadId) {
       console.error("LEAD EMAIL NO ID:", leadEmail);
-      return sendJson(res, 500, {
-        ok: false,
-        error: "Lead email sent but no ID returned"
-      });
+      return sendJson(res, 500, { ok: false, error: "Lead email sent but no ID returned" });
     }
 
+    /* ===============================
+       2) AUTO-REPLY (to customer)
+       Uses Resend trusted sender
+    =============================== */
     try {
-      await resend.emails.send({
-        from: `HH Construction Group <${process.env.MAIL_FROM}>`,
+      const autoReply = await resend.emails.send({
+        from: `HH Construction Group <${AUTO_REPLY_FROM}>`, // ✅ key change
         to: email,
-        replyTo: process.env.MAIL_TO,
+        replyTo: process.env.MAIL_TO, // customer replies go to your inbox
         subject: "We received your request ✅",
         text:
           `Hi ${name},\n\n` +
@@ -90,17 +91,18 @@ module.exports = async (req, res) => {
           `— HH Construction Group Inc.\n` +
           `Los Angeles, CA`
       });
+
+      if (autoReply?.error) {
+        console.error("AUTO-REPLY ERROR:", autoReply.error);
+      }
     } catch (autoErr) {
-      // Auto-reply failure should NOT break form success
       console.error("AUTO-REPLY FAILED:", autoErr);
     }
+
     return sendJson(res, 200, { ok: true, id: leadId });
 
   } catch (err) {
     console.error("CONTACT API ERROR:", err);
-    return sendJson(res, 500, {
-      ok: false,
-      error: "Email failed to send"
-    });
+    return sendJson(res, 500, { ok: false, error: err?.message || "Email failed to send" });
   }
 };
