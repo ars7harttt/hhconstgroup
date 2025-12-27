@@ -81,8 +81,7 @@ module.exports = async (req, res) => {
         `feel free to reply directly to this email.\n\n` +
         `We look forward to working with you.\n\n` +
         `Best regards,\n` +
-        `HH Construction Group Inc.\n` +
-        `Los Angeles, CA`
+        `HH Construction Group Inc.\n`
     });
 
     // Return auto-reply status to you so we can see why it fails
