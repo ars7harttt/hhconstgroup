@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
   // IMPORTANT: Use a hardcoded trusted sender for auto-reply.
   // Do NOT store "HH Construction Group <...>" in env vars.
   const LEAD_FROM = `HH Construction Group <${process.env.MAIL_FROM}>`;
-  const AUTO_FROM = `HH Construction Group <onboarding@resend.dev>`; // trusted sender
+  const AUTO_FROM = `HH Construction Group <contact@hhconstructions.net>`; // trusted sender
 
   try {
     // 1) Lead email (to you)
