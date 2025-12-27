@@ -71,12 +71,17 @@ module.exports = async (req, res) => {
       from: AUTO_FROM,
       to: email,
       replyTo: process.env.MAIL_TO,
-      subject: "We received your request ✅",
+      subject: "We’ve Received Your Request — HH Construction Group Inc ✅",
       text:
         `Hi ${name},\n\n` +
         `Thank you for contacting HH Construction Group Inc.\n\n` +
-        `We’ve received your request and will contact you shortly.\n\n` +
-        `— HH Construction Group Inc.\n` +
+        `We’ve successfully received your request and appreciate you taking the time to reach out. ` +
+        `A member of our team will review your project details and contact you shortly to discuss next steps.\n\n` +
+        `If you have additional information, photos, or questions you’d like to share in the meantime, ` +
+        `feel free to reply directly to this email.\n\n` +
+        `We look forward to working with you.\n\n` +
+        `Best regards,\n` +
+        `HH Construction Group Inc.\n` +
         `Los Angeles, CA`
     });
 
