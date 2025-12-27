@@ -237,41 +237,46 @@
     });
   </script>
 
-<script>
-  const form = document.getElementById("contactForm");
-  const statusEl = document.getElementById("formStatus");
+  <script>
+    const form = document.getElementById("contactForm");
+    const statusEl = document.getElementById("formStatus");
   
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
   
-    statusEl.textContent = "Sending…";
+      statusEl.textContent = "Sending...";
   
-    const payload = {
-      name: form.name.value,
-      email: form.email.value,
-      phone: form.phone.value,
-      service: form.service.value,
-      message: form.message.value
-    };
+      const payload = {
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        service: document.getElementById("service").value,
+        message: document.getElementById("message").value.trim()
+      };
   
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+      // DEBUG (temporary)
+      console.log("Sending payload:", payload);
   
-      const data = await res.json();
-  
-      if (data.ok) {
-        window.location.href = "/thank-you.html";
-      } else {
-        statusEl.textContent = data.error || "Something went wrong.";
-      }
-    } catch (err) {
-      statusEl.textContent = "Network error. Please try again.";
-    }
+      try {
+  const result = await resend.emails.send({
+    from: process.env.MAIL_FROM,
+    to: process.env.MAIL_TO,
+    replyTo: email,
+    subject: `New Quote Request: ${name}`,
+    text:
+      `Name: ${name}\n` +
+      `Email: ${email}\n` +
+      `Phone: ${phone}\n` +
+      `Project Type: ${service || "(not selected)"}\n\n` +
+      `Message:\n${message || "(no details provided)"}`
   });
+
+  // result usually contains an id
+  return sendJson(res, 200, { ok: true, id: result?.data?.id || result?.id || null });
+} catch (err) {
+  console.error("RESEND ERROR:", err);
+  return sendJson(res, 500, { ok: false, error: err?.message || "Email failed" });
+}
   </script>
 
 </body>
