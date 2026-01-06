@@ -193,5 +193,33 @@
   </footer>
 
   <script src="./Scripts/script.js"></script>
+
+  <!-- AI Assistant -->
+  <div class="ai-assistant">
+    <button class="ai-assistant-button" id="aiAssistantButton" aria-label="Open AI Assistant">
+      👷🏻‍♂️
+    </button>
+    <div class="ai-assistant-window" id="aiAssistantWindow">
+      <div class="ai-assistant-header">
+        <h3>👷🏻‍♂️ AI Assistant</h3>
+        <button class="ai-assistant-close" id="aiAssistantClose" aria-label="Close">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <div class="ai-assistant-messages" id="aiAssistantMessages"></div>
+      <div class="ai-quick-actions">
+        <button class="ai-quick-action">Get a free estimate</button>
+        <button class="ai-quick-action">Our services</button>
+        <button class="ai-quick-action">Contact info</button>
+      </div>
+      <div class="ai-assistant-input-area">
+        <input type="text" class="ai-assistant-input" id="aiAssistantInput" placeholder="Ask me anything..." />
+        <button class="ai-assistant-send" id="aiAssistantSend">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <script src="./Scripts/ai-assistant.js"></script>
 </body>
 </html>
