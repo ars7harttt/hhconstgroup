@@ -7,12 +7,37 @@ class EntranceAnimation {
     
     if (!this.container) return;
     
+    // Check if user has visited before - do this immediately
+    const hasVisited = localStorage.getItem('hhconstgroup_visited');
+    
+    if (hasVisited === 'true') {
+      // User has visited before, skip animation completely
+      this.skipAnimation();
+      return; // Exit early
+    }
+    
+    // First visit, mark as visited immediately before showing animation
+    localStorage.setItem('hhconstgroup_visited', 'true');
     this.init();
   }
   
+  skipAnimation() {
+    // Hide animation immediately without showing it
+    if (this.container) {
+      this.container.style.display = 'none';
+      this.container.style.visibility = 'hidden';
+      this.container.style.opacity = '0';
+      this.container.style.pointerEvents = 'none';
+    }
+    // Ensure body is not locked
+    document.body.classList.remove('animation-active');
+  }
+  
   init() {
-    // Reset animation state
-    this.container.style.display = 'block';
+    // Reset animation state - only show on first visit
+    this.container.style.display = 'flex';
+    this.container.style.visibility = 'visible';
+    this.container.style.opacity = '1';
     this.container.classList.remove('completed');
     
     // Prevent body scroll during animation

@@ -7,12 +7,55 @@ class EntranceAnimation {
     
     if (!this.container) return;
     
+    // Check if it's a reload on homepage
+    let isReload = false;
+    try {
+      const navEntry = performance.getEntriesByType('navigation')[0];
+      if (navEntry) {
+        isReload = navEntry.type === 'reload';
+      } else {
+        // Fallback for older browsers
+        isReload = performance.navigation && performance.navigation.type === 1;
+      }
+    } catch(e) {
+      // If performance API not available, assume not reload
+    }
+    
+    // Check if user has visited before
+    const hasVisited = localStorage.getItem('hhconstgroup_visited') === 'true';
+    
+    // Show animation if: first visit OR reload on homepage
+    if (hasVisited && !isReload) {
+      // User has visited before and it's not a reload, skip animation
+      this.skipAnimation();
+      return; // Exit early
+    }
+    
+    // First visit or reload on homepage - show animation
+    // Mark as visited (only on first visit, reloads don't need to set this again)
+    if (!hasVisited) {
+      localStorage.setItem('hhconstgroup_visited', 'true');
+    }
     this.init();
   }
   
+  skipAnimation() {
+    // Hide animation immediately without showing it
+    if (this.container) {
+      this.container.style.display = 'none';
+      this.container.style.visibility = 'hidden';
+      this.container.style.opacity = '0';
+      this.container.style.pointerEvents = 'none';
+    }
+    // Ensure body is not locked
+    document.body.classList.remove('animation-active');
+  }
+  
   init() {
-    // Reset animation state
-    this.container.style.display = 'block';
+    // Reset animation state - only show on first visit
+    this.container.style.display = 'flex';
+    this.container.style.visibility = 'visible';
+    this.container.style.opacity = '1';
     this.container.classList.remove('completed');
     
     // Prevent body scroll during animation

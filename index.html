@@ -71,6 +71,38 @@
     <img src="./Images/logo.png" alt="HH Construction Group" class="entrance-image" />
     <div class="company-name">HH Construction<br>Group&nbsp;Inc.</div>
   </div>
+  <script>
+    // Immediately check if animation should be shown
+    (function() {
+      var animContainer = document.querySelector('.entrance-animation');
+      if (!animContainer) return;
+      
+      // Check if it's a reload on homepage
+      var isReload = false;
+      try {
+        var navEntry = performance.getEntriesByType('navigation')[0];
+        if (navEntry) {
+          isReload = navEntry.type === 'reload';
+        } else {
+          // Fallback for older browsers
+          isReload = performance.navigation && performance.navigation.type === 1;
+        }
+      } catch(e) {
+        // If performance API not available, assume not reload
+      }
+      
+      // Check if user has visited before (but allow reload on homepage)
+      var hasVisited = localStorage.getItem('hhconstgroup_visited') === 'true';
+      
+      // Hide animation only if: user has visited AND it's not a reload on homepage
+      if (hasVisited && !isReload) {
+        animContainer.style.display = 'none';
+        animContainer.style.visibility = 'hidden';
+        animContainer.style.opacity = '0';
+        animContainer.style.pointerEvents = 'none';
+      }
+    })();
+  </script>
 
   <header class="site-header">
     <div class="container header-inner">
