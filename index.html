@@ -393,25 +393,106 @@
       var animContainer = document.querySelector('.entrance-animation');
       if (!animContainer) return;
       
-      // Check if it's a reload on homepage
+      // Check navigation type for reload/refresh
       var isReload = false;
       try {
         var navEntry = performance.getEntriesByType('navigation')[0];
-        if (navEntry) {
-          isReload = navEntry.type === 'reload';
-        } else {
+        if (navEntry && navEntry.type === 'reload') {
+          isReload = true;
+        } else if (performance.navigation) {
           // Fallback for older browsers
-          isReload = performance.navigation && performance.navigation.type === 1;
+          if (performance.navigation.type === 1) {
+            isReload = true;
+          }
         }
       } catch(e) {
-        // If performance API not available, assume not reload
+        // If performance API not available, check if referrer is same as current URL
+        var referrerCheck = document.referrer || '';
+        if (referrerCheck === window.location.href) {
+          isReload = true;
+        }
       }
       
-      // Check if user has visited before (but allow reload on homepage)
-      var hasVisited = localStorage.getItem('hhconstgroup_visited') === 'true';
+      // Check referrer
+      var referrer = document.referrer || '';
+      var hostname = window.location.hostname;
       
-      // Hide animation only if: user has visited AND it's not a reload on homepage
-      if (hasVisited && !isReload) {
+      // Check if referrer is from Google search (various Google domains)
+      var isGoogleSearch = false;
+      if (referrer) {
+        var googleDomains = ['google.com', 'google.co.uk', 'google.ca', 'google.com.au', 'google.de', 'google.fr', 'google.it', 'google.es', 'google.nl', 'google.pl', 'google.ru', 'google.co.jp', 'google.co.in', 'google.com.br', 'google.com.mx', 'google.com.tr', 'google.co.kr', 'google.com.hk', 'google.com.sg', 'google.com.tw', 'google.co.za', 'google.com.ar', 'google.cl', 'google.com.co', 'google.com.pe', 'google.com.ua', 'google.com.vn', 'google.com.ph', 'google.com.my', 'google.co.id', 'google.com.bd', 'google.com.pk', 'google.com.eg', 'google.com.sa', 'google.ae', 'google.co.il', 'google.com.nz', 'google.ie', 'google.be', 'google.at', 'google.ch', 'google.se', 'google.no', 'google.dk', 'google.fi', 'google.pt', 'google.cz', 'google.ro', 'google.hu', 'google.gr', 'google.bg', 'google.sk', 'google.si', 'google.hr', 'google.lt', 'google.lv', 'google.ee', 'google.lu', 'google.is', 'google.mk', 'google.rs', 'google.ba', 'google.me', 'google.al', 'google.by', 'google.md', 'google.ge', 'google.am', 'google.az', 'google.kz', 'google.kg', 'google.tj', 'google.tm', 'google.uz', 'google.mn'];
+        for (var i = 0; i < googleDomains.length; i++) {
+          if (referrer.includes(googleDomains[i])) {
+            isGoogleSearch = true;
+            break;
+          }
+        }
+      }
+      
+      // Check if referrer is from same domain (internal navigation)
+      var isSameDomain = false;
+      if (referrer) {
+        try {
+          var referrerUrl = new URL(referrer);
+          var currentUrl = new URL(window.location.href);
+          var referrerHost = referrerUrl.hostname.replace(/^www\./, '');
+          var currentHost = currentUrl.hostname.replace(/^www\./, '');
+          
+          // Check if same hostname
+          if (referrerHost === currentHost) {
+            isSameDomain = true;
+          } else if (referrerHost === '' && currentHost === '') {
+            // Both are file:// or local - treat as same domain
+            isSameDomain = true;
+          }
+          
+          // Also check if referrer pathname suggests internal navigation
+          if (isSameDomain) {
+            var referrerPath = referrerUrl.pathname.toLowerCase();
+            // If coming from about or contact pages, definitely same domain
+            if (referrerPath.includes('aboutpage.html') || 
+                referrerPath.includes('contuctus.html') ||
+                referrerPath.includes('contuctus.html') ||
+                referrerPath.includes('/about') ||
+                referrerPath.includes('/contact')) {
+              isSameDomain = true;
+            }
+          }
+        } catch(e) {
+          // Fallback: simple string check
+          if (referrer.includes(hostname) || 
+              referrer.includes(window.location.host) ||
+              (hostname === '' && referrer.startsWith('file://'))) {
+            isSameDomain = true;
+          }
+        }
+      }
+      
+      // Show animation if:
+      // 1. Reload/refresh (updating the website)
+      // 2. Coming from Google search
+      // 3. No referrer (direct entry/search bar)
+      // 4. External referrer (not same domain)
+      // Hide animation if navigating from about/contact pages (same domain)
+      var shouldShow = false;
+      
+      if (isReload) {
+        // Reload/refresh - show animation
+        shouldShow = true;
+      } else if (isGoogleSearch) {
+        // Coming from Google search - always show animation
+        shouldShow = true;
+      } else if (!referrer) {
+        // No referrer - direct entry/search bar - show animation
+        shouldShow = true;
+      } else if (!isSameDomain) {
+        // External referrer (different domain) - show animation
+        shouldShow = true;
+      }
+      // If same domain navigation (from about/contact), don't show (shouldShow stays false)
+      
+      // Hide animation only if we shouldn't show it
+      if (!shouldShow) {
         animContainer.style.display = 'none';
         animContainer.style.visibility = 'hidden';
         animContainer.style.opacity = '0';
@@ -513,8 +594,10 @@
         </ul>
         <a href="./contuctUs.html" class="btn btn-primary" aria-label="Schedule a free consultation in Los Angeles">Schedule a Consultation</a>
       </div>
-      <div class="features-image">
-        <img src="./Images/home-page-big-img.png" alt="HH Construction Group Inc. - Licensed General Contractor serving Los Angeles, Beverly Hills, Santa Monica, Pasadena, Burbank, Glendale, West Hollywood, Culver City, Manhattan Beach, Redondo Beach, Torrance, Long Beach, Orange County, San Fernando Valley, and all of California" loading="lazy" width="800" height="600" />
+      <div class="features-image-wrapper">
+        <div class="features-image">
+          <img src="./Images/home-page-big-img.png" alt="HH Construction Group Inc. - Licensed General Contractor serving Los Angeles, Beverly Hills, Santa Monica, Pasadena, Burbank, Glendale, West Hollywood, Culver City, Manhattan Beach, Redondo Beach, Torrance, Long Beach, Orange County, San Fernando Valley, and all of California" loading="lazy" width="800" height="600" />
+        </div>
       </div>
     </div>
   </section>
@@ -632,6 +715,58 @@
     </div>
   </div>
 
+  <script>
+    // Hero h1 fade-in animation - only on initial entry
+    (function() {
+      // Check if should animate (same logic as entrance animation)
+      var referrer = document.referrer || '';
+      var hostname = window.location.hostname;
+      var isReload = false;
+      var isSameDomain = false;
+      
+      try {
+        var navEntry = performance.getEntriesByType('navigation')[0];
+        if (navEntry && navEntry.type === 'reload') {
+          isReload = true;
+        }
+      } catch(e) {}
+      
+      if (referrer) {
+        try {
+          var referrerUrl = new URL(referrer);
+          var currentUrl = new URL(window.location.href);
+          var referrerHost = referrerUrl.hostname.replace(/^www\./, '');
+          var currentHost = currentUrl.hostname.replace(/^www\./, '');
+          isSameDomain = referrerHost === currentHost;
+        } catch(e) {
+          isSameDomain = referrer.includes(hostname);
+        }
+      }
+      
+      // Show animation if: reload, Google search, no referrer, or external referrer
+      // Hide if: same domain navigation
+      var shouldAnimate = isReload || !referrer || !isSameDomain;
+      
+      var heroH1 = document.querySelector('.hero h1');
+      if (heroH1 && shouldAnimate) {
+        // Add animation
+        heroH1.style.animation = 'fadeInUp 1s ease-out';
+        heroH1.style.opacity = '0';
+        heroH1.style.transform = 'translateY(40px)';
+        
+        // Trigger animation
+        setTimeout(function() {
+          heroH1.style.opacity = '1';
+          heroH1.style.transform = 'translateY(0)';
+        }, 100);
+      } else if (heroH1) {
+        // No animation, just show immediately
+        heroH1.style.opacity = '1';
+        heroH1.style.transform = 'translateY(0)';
+      }
+    })();
+  </script>
+  <script src="./Scripts/smooth-navigation.js" defer></script>
   <script src="./Scripts/script.js" defer></script>
   <script src="./Scripts/entrance-animation.js" defer></script>
   <script src="./Scripts/ai-assistant.js" defer></script>

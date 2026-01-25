@@ -7,35 +7,111 @@ class EntranceAnimation {
     
     if (!this.container) return;
     
-    // Check if it's a reload on homepage
+    // Check navigation type for reload/refresh
     let isReload = false;
     try {
       const navEntry = performance.getEntriesByType('navigation')[0];
-      if (navEntry) {
-        isReload = navEntry.type === 'reload';
-      } else {
+      if (navEntry && navEntry.type === 'reload') {
+        isReload = true;
+      } else if (performance.navigation) {
         // Fallback for older browsers
-        isReload = performance.navigation && performance.navigation.type === 1;
+        if (performance.navigation.type === 1) {
+          isReload = true;
+        }
       }
     } catch(e) {
-      // If performance API not available, assume not reload
+      // If performance API not available, check if referrer is same as current URL
+      const referrerCheck = document.referrer || '';
+      if (referrerCheck === window.location.href) {
+        isReload = true;
+      }
     }
     
-    // Check if user has visited before
-    const hasVisited = localStorage.getItem('hhconstgroup_visited') === 'true';
+    // Check referrer
+    const referrer = document.referrer || '';
+    const hostname = window.location.hostname;
     
-    // Show animation if: first visit OR reload on homepage
-    if (hasVisited && !isReload) {
-      // User has visited before and it's not a reload, skip animation
+    // Check if referrer is from Google search (various Google domains)
+    let isGoogleSearch = false;
+    if (referrer) {
+      const googleDomains = ['google.com', 'google.co.uk', 'google.ca', 'google.com.au', 'google.de', 'google.fr', 'google.it', 'google.es', 'google.nl', 'google.pl', 'google.ru', 'google.co.jp', 'google.co.in', 'google.com.br', 'google.com.mx', 'google.com.tr', 'google.co.kr', 'google.com.hk', 'google.com.sg', 'google.com.tw', 'google.co.za', 'google.com.ar', 'google.cl', 'google.com.co', 'google.com.pe', 'google.com.ua', 'google.com.vn', 'google.com.ph', 'google.com.my', 'google.co.id', 'google.com.bd', 'google.com.pk', 'google.com.eg', 'google.com.sa', 'google.ae', 'google.co.il', 'google.com.nz', 'google.ie', 'google.be', 'google.at', 'google.ch', 'google.se', 'google.no', 'google.dk', 'google.fi', 'google.pt', 'google.cz', 'google.ro', 'google.hu', 'google.gr', 'google.bg', 'google.sk', 'google.si', 'google.hr', 'google.lt', 'google.lv', 'google.ee', 'google.lu', 'google.is', 'google.mk', 'google.rs', 'google.ba', 'google.me', 'google.al', 'google.by', 'google.md', 'google.ge', 'google.am', 'google.az', 'google.kz', 'google.kg', 'google.tj', 'google.tm', 'google.uz', 'google.mn'];
+      for (let i = 0; i < googleDomains.length; i++) {
+        if (referrer.includes(googleDomains[i])) {
+          isGoogleSearch = true;
+          break;
+        }
+      }
+    }
+    
+    // Check if referrer is from same domain (internal navigation)
+    let isSameDomain = false;
+    if (referrer) {
+      try {
+        const referrerUrl = new URL(referrer);
+        const currentUrl = new URL(window.location.href);
+        const referrerHost = referrerUrl.hostname.replace(/^www\./, '');
+        const currentHost = currentUrl.hostname.replace(/^www\./, '');
+        
+        // Check if same hostname
+        if (referrerHost === currentHost) {
+          isSameDomain = true;
+        } else if (referrerHost === '' && currentHost === '') {
+          // Both are file:// or local - treat as same domain
+          isSameDomain = true;
+        }
+        
+        // Also check if referrer pathname suggests internal navigation
+        if (isSameDomain) {
+          const referrerPath = referrerUrl.pathname.toLowerCase();
+          // If coming from about or contact pages, definitely same domain
+          if (referrerPath.includes('aboutpage.html') || 
+              referrerPath.includes('contuctus.html') ||
+              referrerPath.includes('contuctus.html') ||
+              referrerPath.includes('/about') ||
+              referrerPath.includes('/contact')) {
+            isSameDomain = true;
+          }
+        }
+      } catch(e) {
+        // Fallback: simple string check
+        if (referrer.includes(hostname) || 
+            referrer.includes(window.location.host) ||
+            (hostname === '' && referrer.startsWith('file://'))) {
+          isSameDomain = true;
+        }
+      }
+    }
+    
+    // Show animation if:
+    // 1. Reload/refresh (updating the website)
+    // 2. Coming from Google search
+    // 3. No referrer (direct entry/search bar)
+    // 4. External referrer (not same domain)
+    // Hide animation if navigating from about/contact pages (same domain)
+    let shouldShow = false;
+    
+    if (isReload) {
+      // Reload/refresh - show animation
+      shouldShow = true;
+    } else if (isGoogleSearch) {
+      // Coming from Google search - always show animation
+      shouldShow = true;
+    } else if (!referrer) {
+      // No referrer - direct entry/search bar - show animation
+      shouldShow = true;
+    } else if (!isSameDomain) {
+      // External referrer (different domain) - show animation
+      shouldShow = true;
+    }
+    // If same domain navigation (from about/contact), don't show (shouldShow stays false)
+    
+    // Skip animation only if we shouldn't show it
+    if (!shouldShow) {
       this.skipAnimation();
       return; // Exit early
     }
     
-    // First visit or reload on homepage - show animation
-    // Mark as visited (only on first visit, reloads don't need to set this again)
-    if (!hasVisited) {
-      localStorage.setItem('hhconstgroup_visited', 'true');
-    }
+    // Show animation
     this.init();
   }
   
@@ -52,7 +128,7 @@ class EntranceAnimation {
   }
   
   init() {
-    // Reset animation state - only show on first visit
+    // Reset animation state - show animation
     this.container.style.display = 'flex';
     this.container.style.visibility = 'visible';
     this.container.style.opacity = '1';
