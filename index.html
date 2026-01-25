@@ -9,9 +9,17 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a1a1a" />
+  <meta name="format-detection" content="telephone=yes" />
+
+  <!-- Performance & Resource Hints -->
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+  <link rel="preload" href="./Styles/style.css" as="style" />
+  <link rel="preload" href="./Images/logo.png" as="image" />
 
   <!-- Primary SEO Title - Optimized for Los Angeles and California -->
-  <title>Los Angeles General Contractor | HH Construction Group Inc. | Licensed Contractor CA | Residential & Commercial Construction Los Angelesbank</title>
+  <title>HH Construction Group Inc. | Los Angeles General Contractor | Licensed Contractor CA | Residential & Commercial Construction</title>
 
   <!-- Comprehensive SEO Meta Tags -->
   <meta name="description" content="HH Construction Group Inc. is a licensed general contractor serving Los Angeles, CA, Beverly Hills, Santa Monica, Pasadena, Burbank, Glendale, West Hollywood, Culver City, Manhattan Beach, Redondo Beach, Torrance, Long Beach, Orange County, San Fernando Valley, and all of California. We provide residential construction, commercial projects, ADUs, additions, kitchen remodels, bathroom renovations, home additions, custom homes, tenant improvements, and high-end remodels. Licensed, bonded, and insured. Free estimates. Call (818) 666-5558." />
@@ -26,10 +34,14 @@
   <meta name="revisit-after" content="7 days" />
   <meta name="distribution" content="global" />
   <meta name="rating" content="general" />
+  <meta name="coverage" content="Worldwide" />
+  <meta name="target" content="all" />
+  <meta name="audience" content="all" />
   <link rel="canonical" href="https://hhconstructions.net/" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
   <!-- Open Graph / Social Media Optimization -->
-  <meta property="og:title" content="Los Angeles General Contractor | HH Construction Group Inc. | Licensed Contractor CA" />
+  <meta property="og:title" content="HH Construction Group Inc. | Los Angeles General Contractor | Licensed Contractor CA" />
   <meta property="og:description" content="Licensed general contractor serving Los Angeles, Beverly Hills, Santa Monica, Pasadena, and all of California. Residential & commercial construction, ADUs, additions, remodels. Licensed, bonded, insured. Free estimates." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://hhconstructions.net/" />
@@ -47,7 +59,7 @@
 
   <!-- Twitter Card Optimization -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Los Angeles General Contractor | HH Construction Group Inc." />
+  <meta name="twitter:title" content="HH Construction Group Inc. | Los Angeles General Contractor" />
   <meta name="twitter:description" content="Licensed general contractor serving Los Angeles, CA. Residential & commercial construction, ADUs, additions, remodels. Licensed, bonded, insured." />
   <meta name="twitter:image" content="https://hhconstructions.net/Images/home-page-big-img.png" />
   <meta name="twitter:image:alt" content="HH Construction Group Inc. Construction Services" />
@@ -63,7 +75,10 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     crossorigin="anonymous"
     referrerpolicy="no-referrer"
+    media="print"
+    onload="this.media='all'"
   />
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" /></noscript>
 
   <!-- Comprehensive Structured Data: LocalBusiness with Enhanced Details -->
   <script type="application/ld+json">
@@ -279,11 +294,97 @@
     ]
   }
   </script>
+
+  <!-- WebSite Schema with SearchAction -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "HH Construction Group Inc.",
+    "url": "https://hhconstructions.net/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://hhconstructions.net/?s={search_term_string}",
+      "query-input": "required name=search_term_string"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "HH Construction Group Inc.",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://hhconstructions.net/Images/logo.png"
+      }
+    }
+  }
+  </script>
+
+  <!-- Organization Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://hhconstructions.net/#organization",
+    "name": "HH Construction Group Inc.",
+    "alternateName": "HH Construction Group",
+    "url": "https://hhconstructions.net/",
+    "logo": "https://hhconstructions.net/Images/logo.png",
+    "image": "https://hhconstructions.net/Images/logo.png",
+    "description": "Licensed general contractor serving Los Angeles, CA and surrounding areas. Specializing in residential construction, commercial projects, ADUs, additions, and high-end remodels.",
+    "telephone": ["+1-818-666-5558", "+1-707-400-0074"],
+    "email": "contact@hhconstructions.net",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Los Angeles",
+      "addressLocality": "Los Angeles",
+      "addressRegion": "CA",
+      "postalCode": "90001",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "34.0522",
+      "longitude": "-118.2437"
+    },
+    "areaServed": [
+      {
+        "@type": "City",
+        "name": "Los Angeles"
+      },
+      {
+        "@type": "City",
+        "name": "Beverly Hills"
+      },
+      {
+        "@type": "City",
+        "name": "Santa Monica"
+      },
+      {
+        "@type": "City",
+        "name": "Pasadena"
+      },
+      {
+        "@type": "State",
+        "name": "California"
+      }
+    ],
+    "sameAs": [
+      "https://www.instagram.com/hhconstructiongrp?igsh=NTc4MTIwNjQ2YQ==",
+      "https://www.facebook.com/profile.php?id=61582809487013"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "98",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  }
+  </script>
 </head>
 <body>
   <!-- Entrance Animation -->
   <div class="entrance-animation">
-    <img src="./Images/logo.png" alt="HH Construction Group Inc. - Licensed General Contractor, CA" class="entrance-image" />
+    <img src="./Images/logo.png" alt="HH Construction Group Inc. - Licensed General Contractor, CA" class="entrance-image" width="200" height="200" />
     <div class="company-name">HH Construction<br>Group&nbsp;Inc.</div>
   </div>
   <script>
@@ -322,7 +423,7 @@
   <header class="site-header">
     <div class="container header-inner">
       <a href="./index.html" class="logo" aria-label="HH Construction Group Inc. - Los Angeles General Contractor">
-        <img src="./Images/logo.png" alt="HH Construction Group Inc. - Licensed General Contractor in California" />
+        <img src="./Images/logo.png" alt="HH Construction Group Inc. - Licensed General Contractor in California" width="150" height="60" />
       </a>
       <button class="nav-toggle" aria-label="Toggle navigation">
         <span class="nav-toggle-bar"></span>
@@ -340,6 +441,7 @@
     </div>
   </header>
 
+  <main>
   <section class="hero" id="top" itemscope itemtype="https://schema.org/Service">
     <div class="hero-overlay"></div>
     <div class="container hero-content">
@@ -412,7 +514,7 @@
         <a href="./contuctUs.html" class="btn btn-primary" aria-label="Schedule a free consultation in Los Angeles">Schedule a Consultation</a>
       </div>
       <div class="features-image">
-        <img src="./Images/home-page-big-img.png" alt="HH Construction Group Inc. - Licensed General Contractor serving Los Angeles, Beverly Hills, Santa Monica, Pasadena, Burbank, Glendale, West Hollywood, Culver City, Manhattan Beach, Redondo Beach, Torrance, Long Beach, Orange County, San Fernando Valley, and all of California" />
+        <img src="./Images/home-page-big-img.png" alt="HH Construction Group Inc. - Licensed General Contractor serving Los Angeles, Beverly Hills, Santa Monica, Pasadena, Burbank, Glendale, West Hollywood, Culver City, Manhattan Beach, Redondo Beach, Torrance, Long Beach, Orange County, San Fernando Valley, and all of California" loading="lazy" width="800" height="600" />
       </div>
     </div>
   </section>
@@ -427,11 +529,11 @@
     </div>
   </section>
 
-  <section class="stats-section">
+  <section class="stats-section" itemscope itemtype="https://schema.org/Organization">
     <div class="container">
       <div class="stats-grid">
         <div class="stat-item fade-in-up is-visible" style="--delay: 1.2000000000000002s;">
-          <span class="stat-number" data-target="100">100+</span>
+          <span class="stat-number" data-target="100" itemprop="numberOfEmployees">100+</span>
           <span class="stat-label">Projects Completed</span>
         </div>
         <div class="stat-item fade-in-up is-visible" style="--delay: 1.3s;">
@@ -443,12 +545,13 @@
           <span class="stat-label">Client Satisfaction</span>
         </div>
         <div class="stat-item fade-in-up is-visible" style="--delay: 1.5s;">
-          <span class="stat-number" data-target="15">15+</span>
+          <span class="stat-number" data-target="15" itemprop="numberOfEmployees">15+</span>
           <span class="stat-label">Expert Team Members</span>
         </div>
       </div>
     </div>
   </section>
+  </main>
 
   <footer class="site-footer">
     <div class="container">
@@ -529,9 +632,9 @@
     </div>
   </div>
 
-  <script src="./Scripts/script.js"></script>
-  <script src="./Scripts/entrance-animation.js"></script>
-  <script src="./Scripts/ai-assistant.js"></script>
+  <script src="./Scripts/script.js" defer></script>
+  <script src="./Scripts/entrance-animation.js" defer></script>
+  <script src="./Scripts/ai-assistant.js" defer></script>
 </body>
 </html>
 
