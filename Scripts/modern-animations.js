@@ -3,6 +3,12 @@
 (function() {
   'use strict';
 
+  // Check for IntersectionObserver support
+  if (!window.IntersectionObserver) {
+    console.warn('IntersectionObserver not supported, animations disabled');
+    return;
+  }
+
   // Intersection Observer for scroll animations
   const observerOptions = {
     threshold: 0.1,
@@ -18,20 +24,25 @@
     });
   }, observerOptions);
 
-  // Animate all h1 and adjacent p tags
+  // Animate all h1 and adjacent p tags (excluding hero section which has CSS animations)
   function initHeadingAnimations() {
-    const headings = document.querySelectorAll('h1, h2, h3');
+    const headings = document.querySelectorAll('h1:not(.hero h1), h2, h3');
     headings.forEach((heading, index) => {
+      // Skip if already in hero section
+      if (heading.closest('.hero')) return;
+      
       heading.style.opacity = '0';
       heading.style.transform = 'translateY(30px)';
       heading.style.transition = `all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${index * 0.1}s`;
       observer.observe(heading);
     });
 
-    // Animate paragraphs that follow headings
+    // Animate paragraphs that follow headings (excluding hero section)
     headings.forEach(heading => {
+      if (heading.closest('.hero')) return;
+      
       const nextP = heading.nextElementSibling;
-      if (nextP && nextP.tagName === 'P') {
+      if (nextP && nextP.tagName === 'P' && !nextP.closest('.hero')) {
         nextP.style.opacity = '0';
         nextP.style.transform = 'translateY(20px)';
         nextP.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s';
@@ -75,11 +86,17 @@
 
   // Smooth parallax effect on scroll
   function initParallax() {
+    // Skip parallax on mobile for better performance
+    if (window.innerWidth <= 720) return;
+    
     const parallaxElements = document.querySelectorAll('.section-title, .section-subtitle');
     
     window.addEventListener('scroll', () => {
       const scrolled = window.pageYOffset;
       parallaxElements.forEach(element => {
+        // Skip if element has animate-in class (to avoid conflicts)
+        if (element.classList.contains('animate-in')) return;
+        
         const rect = element.getBoundingClientRect();
         if (rect.top < window.innerHeight && rect.bottom > 0) {
           const speed = 0.1;
@@ -171,15 +188,19 @@
 
   // Initialize all animations
   function init() {
-    initHeadingAnimations();
-    initHeroAnimations();
-    initCardAnimations();
-    initFeatureAnimations();
-    initStatsAnimations();
-    initAboutAnimations();
-    initParallax();
-    initCardHover();
-    initButtonAnimations();
+    try {
+      initHeadingAnimations();
+      initHeroAnimations();
+      initCardAnimations();
+      initFeatureAnimations();
+      initStatsAnimations();
+      initAboutAnimations();
+      initParallax();
+      initCardHover();
+      initButtonAnimations();
+    } catch(error) {
+      console.error('Animation initialization error:', error);
+    }
   }
 
   // Wait for DOM to be ready
