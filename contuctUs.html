@@ -413,8 +413,9 @@
 
           const data = await res.json();
 
+          // Check if backend successfully sent the email
           if (data && data.ok === true) {
-            // Force full page redirect - bypass any smooth navigation
+            // Redirect to thank you page after successful email send
             window.location.replace("./redirected.html");
             return;
           } else {
