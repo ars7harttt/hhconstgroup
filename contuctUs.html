@@ -411,8 +411,8 @@
           const data = await res.json();
   
           if (data.ok) {
-            // ✅ REDIRECT HERE
-            window.location.href = "/redirected.html";
+            // Redirect to thank you page after successful email send
+            window.location.href = "./redirected.html";
           } else {
             statusEl.textContent = data.error || "Something went wrong.";
           }
@@ -423,47 +423,6 @@
     });
   </script>
 
-  <script>
-    const form = document.getElementById("contactForm");
-    const statusEl = document.getElementById("formStatus");
-  
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-    
-      statusEl.textContent = "Sending...";
-    
-      const payload = {
-        name: document.getElementById("name").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-        service: document.getElementById("service").value,
-        message: document.getElementById("message").value.trim()
-      };
-    
-      // DEBUG (temporary)
-      console.log("Sending payload:", payload);
-    
-      try {
-  const result = await resend.emails.send({
-    from: process.env.MAIL_FROM,
-    to: process.env.MAIL_TO,
-    replyTo: email,
-    subject: `New Quote Request: ${name}`,
-    text:
-      `Name: ${name}\n` +
-      `Email: ${email}\n` +
-      `Phone: ${phone}\n` +
-      `Project Type: ${service || "(not selected)"}\n\n` +
-      `Message:\n${message || "(no details provided)"}`
-  });
-      
-  // result usually contains an id
-  return sendJson(res, 200, { ok: true, id: result?.data?.id || result?.id || null });
-} catch (err) {
-  console.error("RESEND ERROR:", err);
-  return sendJson(res, 500, { ok: false, error: err?.message || "Email failed" });
-}
-    
   <script src="./Scripts/smooth-navigation.js" defer></script>
   <script src="./Scripts/script.js" defer></script>
   <script src="./Scripts/user-friendly-popups.js" defer></script>
