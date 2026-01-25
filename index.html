@@ -545,7 +545,7 @@
       </p>
 
       <div class="cards-grid">
-        <article class="card" itemscope itemtype="https://schema.org/Service">
+        <article class="card" itemscope itemtype="https://schema.org/Service" data-service="residential">
           <div class="image-container" id="residential" aria-label="Residential construction project in Los Angeles" itemprop="image"></div>
           <div class="card-body">
             <h3 itemprop="name">Residential Construction</h3>
@@ -553,29 +553,26 @@
               Custom homes, ADUs and additions with careful planning, clear communication
               and high-quality finishes.
             </p>
-            <!-- <a href="./contuctUs.html" class="card-link">Plan your residential project &raquo;</a> -->
           </div>
         </article>
 
-        <article class="card" itemscope itemtype="https://schema.org/Service">
+        <article class="card" itemscope itemtype="https://schema.org/Service" data-service="commercial">
           <div class="image-container" id="commercial" aria-label="Commercial construction project in Los Angeles" itemprop="image"></div>
           <div class="card-body">
             <h3 itemprop="name">Commercial Projects</h3>
             <p itemprop="description">
               Offices, retail and tenant improvements designed to look sharp and function perfectly.
             </p>
-            <!-- <a href="./contuctUs.html" class="card-link">Start a commercial project &raquo;</a> -->
           </div>
         </article>
 
-        <article class="card" itemscope itemtype="https://schema.org/Service">
+        <article class="card" itemscope itemtype="https://schema.org/Service" data-service="remodeling">
           <div class="image-container" id="remodeling" aria-label="Remodeling and renovation project in Los Angeles" itemprop="image"></div>
           <div class="card-body">
             <h3 itemprop="name">Remodels &amp; Renovations</h3>
             <p itemprop="description">
               Kitchens, bathrooms, exteriors and full remodels that bring old spaces to a new level.
             </p>
-            <!-- <a href="./contuctUs.html" class="card-link">Request a remodel estimate &raquo;</a> -->
           </div>
         </article>
       </div>
@@ -688,33 +685,6 @@
     </div>
   </footer>
 
-  <!-- AI Assistant -->
-  <div class="ai-assistant">
-    <button class="ai-assistant-button" id="aiAssistantButton" aria-label="Open AI Assistant">
-      👷🏻‍♂️
-    </button>
-    <div class="ai-assistant-window" id="aiAssistantWindow">
-      <div class="ai-assistant-header">
-        <h3>👷🏻‍♂️ AI Assistant</h3>
-        <button class="ai-assistant-close" id="aiAssistantClose" aria-label="Close">
-          <i class="fa-solid fa-times"></i>
-        </button>
-      </div>
-      <div class="ai-assistant-messages" id="aiAssistantMessages"></div>
-      <div class="ai-quick-actions">
-        <button class="ai-quick-action">Get a free estimate</button>
-        <button class="ai-quick-action">Our services</button>
-        <button class="ai-quick-action">Contact info</button>
-      </div>
-      <div class="ai-assistant-input-area">
-        <input type="text" class="ai-assistant-input" id="aiAssistantInput" placeholder="Ask me anything..." />
-        <button class="ai-assistant-send" id="aiAssistantSend">
-          <i class="fa-solid fa-paper-plane"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
   <script>
     // Hero h1 fade-in animation - only on initial entry
     (function() {
@@ -769,7 +739,8 @@
   <script src="./Scripts/smooth-navigation.js" defer></script>
   <script src="./Scripts/script.js" defer></script>
   <script src="./Scripts/entrance-animation.js" defer></script>
-  <script src="./Scripts/ai-assistant.js" defer></script>
+  <script src="./Scripts/user-friendly-popups.js" defer></script>
+  <script src="./Scripts/modern-animations.js" defer></script>
 </body>
 </html>
 

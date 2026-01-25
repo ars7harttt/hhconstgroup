@@ -1,4 +1,45 @@
 
+
+// Header scroll behavior - show on scroll up, hide on scroll down
+let lastScrollTop = 0;
+let scrollThreshold = 100; // Minimum scroll distance before hiding header
+const header = document.querySelector('.site-header');
+
+if (header) {
+  let ticking = false;
+  
+  function updateHeader() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    // Always show header at the top of the page
+    if (scrollTop < 50) {
+      header.classList.remove('hidden');
+      lastScrollTop = scrollTop;
+      ticking = false;
+      return;
+    }
+    
+    // Show header when scrolling up
+    if (scrollTop < lastScrollTop && scrollTop > scrollThreshold) {
+      header.classList.remove('hidden');
+    }
+    // Hide header when scrolling down past threshold
+    else if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
+      header.classList.add('hidden');
+    }
+    
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    ticking = false;
+  }
+  
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(updateHeader);
+      ticking = true;
+    }
+  }, { passive: true });
+}
+
 const navToggle = document.querySelector('.nav-toggle');
 const nav = document.querySelector('.main-nav');
 
