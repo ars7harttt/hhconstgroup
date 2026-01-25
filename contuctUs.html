@@ -407,17 +407,32 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           });
-  
-          const data = await res.json();
-  
-          if (data.ok) {
-            // Redirect to thank you page after successful email send
-            window.location.href = "./redirected.html";
-          } else {
-            statusEl.textContent = data.error || "Something went wrong.";
+
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
           }
-        } catch {
+
+          const data = await res.json();
+          
+          console.log("API Response:", data);
+
+          if (data && data.ok === true) {
+            // Show success message briefly before redirect
+            statusEl.textContent = "Message sent successfully! Redirecting...";
+            statusEl.style.color = "#4ade80";
+            
+            // Redirect to thank you page after successful email send
+            setTimeout(() => {
+              window.location.href = "./redirected.html";
+            }, 1000);
+          } else {
+            statusEl.textContent = data.error || "Something went wrong. Please try again.";
+            statusEl.style.color = "#ef4444";
+          }
+        } catch (error) {
+          console.error("Form submission error:", error);
           statusEl.textContent = "Network error. Please try again.";
+          statusEl.style.color = "#ef4444";
         }
       });
     });
