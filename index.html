@@ -608,29 +608,6 @@
       <a href="./contuctUs.html" class="btn btn-primary" aria-label="Contact us for free construction estimate in Los Angeles">Contact Us</a>
     </div>
   </section>
-
-  <section class="stats-section" itemscope itemtype="https://schema.org/Organization">
-    <div class="container">
-      <div class="stats-grid">
-        <div class="stat-item fade-in-up is-visible" style="--delay: 1.2000000000000002s;">
-          <span class="stat-number" data-target="100" itemprop="numberOfEmployees">100+</span>
-          <span class="stat-label">Projects Completed</span>
-        </div>
-        <div class="stat-item fade-in-up is-visible" style="--delay: 1.3s;">
-          <span class="stat-number" data-target="5">5</span>
-          <span class="stat-label">Years of Experience</span>
-        </div>
-        <div class="stat-item fade-in-up is-visible" style="--delay: 1.4000000000000001s;">
-          <span class="stat-number" data-target="100">100%</span>
-          <span class="stat-label">Client Satisfaction</span>
-        </div>
-        <div class="stat-item fade-in-up is-visible" style="--delay: 1.5s;">
-          <span class="stat-number" data-target="15" itemprop="numberOfEmployees">15+</span>
-          <span class="stat-label">Expert Team Members</span>
-        </div>
-      </div>
-    </div>
-  </section>
   </main>
 
   <footer class="site-footer">
@@ -741,6 +718,34 @@
   <script src="./Scripts/entrance-animation.js" defer></script>
   <script src="./Scripts/user-friendly-popups.js" defer></script>
   <script src="./Scripts/modern-animations.js" defer></script>
+
+  <!-- AI Assistant -->
+  <div class="ai-assistant">
+    <button class="ai-assistant-button" id="aiAssistantButton" aria-label="Open AI Assistant">
+      👷🏻‍♂️
+    </button>
+    <div class="ai-assistant-window" id="aiAssistantWindow">
+      <div class="ai-assistant-header">
+        <h3>👷🏻‍♂️ AI Assistant</h3>
+        <button class="ai-assistant-close" id="aiAssistantClose" aria-label="Close">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <div class="ai-assistant-messages" id="aiAssistantMessages"></div>
+      <div class="ai-quick-actions">
+        <button class="ai-quick-action">Get a free estimate</button>
+        <button class="ai-quick-action">Our services</button>
+        <button class="ai-quick-action">Contact info</button>
+      </div>
+      <div class="ai-assistant-input-area">
+        <input type="text" class="ai-assistant-input" id="aiAssistantInput" placeholder="Ask me anything..." />
+        <button class="ai-assistant-send" id="aiAssistantSend">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <script src="./Scripts/ai-assistant.js"></script>
 </body>
 </html>
 

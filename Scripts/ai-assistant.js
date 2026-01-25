@@ -158,7 +158,7 @@
     if (!button || !window || !messagesContainer) return;
 
     // Add welcome message
-    addMessage('assistant', "Hello! I'm your construction assistant for HH Construction Group Inc. 👷🏻‍♂️\n\nI can help with:\n📐 Construction calculations (area, volume, materials)\n🧱 Material estimates (concrete, drywall, paint, lumber)\n💰 Cost estimates and building codes\n📏 Measurements and conversions\n\nTry asking:\n• \"Calculate concrete for a 20×30 slab\"\n• \"How much drywall for a 12×10 room?\"\n• \"What's the cost per square foot?\"\n\nOr ask about our services! How can I help you today?");
+    addMessage('assistant', "Hello! 👋 Welcome to HH Construction Group Inc.!\n\nI'm your AI construction assistant, here to help with:\n\n📐 Material Calculations\n• Concrete, drywall, paint, lumber\n• Area, volume, and measurements\n\n💰 Project Estimates\n• Cost per square foot\n• Timeline estimates\n• Building codes & permits\n\n🏗️ Our Services\n• Residential & commercial construction\n• Remodels & renovations\n• ADUs & additions\n\n💡 Try asking:\n• \"Calculate concrete for a 20×30 slab\"\n• \"How much does a kitchen remodel cost?\"\n• \"What services do you offer?\"\n• \"Tell me about your process\"\n\nHow can I help you today?");
 
     // Toggle window
     button.addEventListener('click', () => {
@@ -233,14 +233,22 @@
 
       const content = document.createElement('div');
       content.className = 'ai-message-content';
-      content.textContent = text;
+      
+      // Format text with better line breaks and formatting
+      const formattedText = text.replace(/\n/g, '<br>');
+      content.innerHTML = formattedText;
 
       messageDiv.appendChild(avatar);
       messageDiv.appendChild(content);
       messagesContainer.appendChild(messageDiv);
 
-      // Scroll to bottom
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      // Scroll to bottom with smooth animation
+      setTimeout(() => {
+        messagesContainer.scrollTo({
+          top: messagesContainer.scrollHeight,
+          behavior: 'smooth'
+        });
+      }, 100);
     }
 
     function showTypingIndicator() {
@@ -328,13 +336,18 @@
       }
 
       // Check for greeting
-      if (lowerMessage.match(/\b(hi|hello|hey|greetings|good morning|good afternoon|good evening)\b/)) {
-        return "Hello! 👋 Thanks for reaching out to HH Construction Group Inc. How can I help you with your construction project today?";
+      if (lowerMessage.match(/\b(hi|hello|hey|greetings|good morning|good afternoon|good evening|what's up|sup)\b/)) {
+        return "Hello! 👋 Thanks for reaching out to HH Construction Group Inc. I'm here to help with all your construction needs!\n\nWhat would you like to know? I can help with:\n• Project estimates and costs\n• Material calculations\n• Our services and process\n• Building codes and permits\n• Timeline information\n\nHow can I assist you today?";
       }
 
       // Check for thank you
-      if (lowerMessage.match(/\b(thank|thanks|appreciate|grateful)\b/)) {
-        return "You're welcome! 😊 If you have any more questions about our services or need help with your project, feel free to ask. You can also contact us directly at (818) 666-5558 or visit our contact page for a free estimate!";
+      if (lowerMessage.match(/\b(thank|thanks|appreciate|grateful|thx)\b/)) {
+        return "You're very welcome! 😊\n\nIf you have any more questions about construction, our services, or need help with your project, feel free to ask anytime!\n\nYou can also:\n📞 Call us: (818) 666-5558 or (707) 400-0074\n📧 Email: contact@hhconstructions.net\n📝 Visit our contact page for a free estimate\n\nHave a great day!";
+      }
+
+      // Check for goodbye
+      if (lowerMessage.match(/\b(bye|goodbye|see you|later|farewell|gotta go)\b/)) {
+        return "Goodbye! 👋\n\nThanks for chatting with HH Construction Group Inc. If you need any construction help in the future, I'm always here!\n\nHave a wonderful day and good luck with your project!";
       }
 
       // Default response
