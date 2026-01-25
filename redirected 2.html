@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta name="google-site-verification" content="LDZzntq6qI2VvQSoZfVurQE-mfV48t8pgWUsMTeNOFo" />
+
+  <link rel="icon" href="/Images/favicon.png" type="image/png" sizes="96x96">
+  <link rel="apple-touch-icon" href="/Images/favicon.png">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Thank You | HH Construction Group Inc.</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Thank you for contacting HH Construction Group Inc. in Los Angeles. Your message has been received and we will contact you soon." />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="author" content="HH Construction Group Inc." />
+  <link rel="canonical" href="https://hhconstructions.net/redirected.html" />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="Thank You | HH Construction Group Inc." />
+  <meta property="og:description" content="We have received your message and will follow up shortly." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://hhconstructions.net/redirected.html" />
+  <meta property="og:image" content="https://hhconstructions.net/Images/home-page-big-img.png" />
+
+  <!-- Styles & Icons -->
+  <link rel="icon" type="image/x-icon" href="./Images/logo-icon.PNG">
+  <link rel="stylesheet" href="./Styles/redirected.css">
+  <link rel="stylesheet" href="./Styles/style.css">
+  <link rel="icon" href="/favicon.ico">
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+</head>
+<body>
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="./homePage.html" class="logo">
+        <img src="./Images/logo.png" alt="HH Construction Group Inc. logo" />
+      </a>
+
+      <button class="nav-toggle" aria-label="Toggle navigation">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+
+      <nav class="main-nav">
+        <ul>
+          <li><a href="./homePage.html">Home</a></li>
+          <li><a href="./aboutPage.html">About</a></li>
+          <li><a href="./contuctUs.html">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="center-message">
+    <div>
+      <h1>Thank You!</h1>
+      <p>Your message has been received.<br>We will contact you soon.</p>
+
+      <a href="./homePage.html" class="home-btn">Return Home</a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>&copy; <span id="year"></span> HH Construction Group Inc. All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+
+  <!-- AI Assistant -->
+  <div class="ai-assistant">
+    <button class="ai-assistant-button" id="aiAssistantButton" aria-label="Open AI Assistant">
+      👷🏻‍♂️
+    </button>
+    <div class="ai-assistant-window" id="aiAssistantWindow">
+      <div class="ai-assistant-header">
+        <h3>👷🏻‍♂️ AI Assistant</h3>
+        <button class="ai-assistant-close" id="aiAssistantClose" aria-label="Close">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <div class="ai-assistant-messages" id="aiAssistantMessages"></div>
+      <div class="ai-quick-actions">
+        <button class="ai-quick-action">Get a free estimate</button>
+        <button class="ai-quick-action">Our services</button>
+        <button class="ai-quick-action">Contact info</button>
+      </div>
+      <div class="ai-assistant-input-area">
+        <input type="text" class="ai-assistant-input" id="aiAssistantInput" placeholder="Ask me anything..." />
+        <button class="ai-assistant-send" id="aiAssistantSend">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <script src="./Scripts/ai-assistant.js"></script>
+
+</body>
+</html>
