@@ -43,7 +43,6 @@
   />
 
   <!-- Structured Data: Local Business (same as homepage) -->
-   <script src="./api/contact.js"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -106,7 +105,6 @@
         <form
           class="contact-form"
           id="contactForm"
-          action="api/contact.js"
           method="POST"
         >
           <div class="form-group">
@@ -221,64 +219,62 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           });
-  
-          const data = await res.json();
-  
-          if (data.ok) {
-            // ✅ REDIRECT HERE
-            window.location.href = "/redirected.html";
-          } else {
-            statusEl.textContent = data.error || "Something went wrong.";
+
+          if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.error || `HTTP error! status: ${res.status}`);
           }
-        } catch {
-          statusEl.textContent = "Network error. Please try again.";
+
+          const data = await res.json();
+
+          if (data && data.ok === true) {
+            // Redirect immediately on success - use replace to bypass smooth navigation
+            window.location.replace("./redirected.html");
+            return;
+          } else {
+            statusEl.textContent = data.error || "Something went wrong. Please try again.";
+            statusEl.style.color = "#ef4444";
+          }
+        } catch (error) {
+          statusEl.textContent = error.message || "Network error. Please try again.";
+          statusEl.style.color = "#ef4444";
         }
       });
     });
   </script>
 
-  <script>
-    const form = document.getElementById("contactForm");
-    const statusEl = document.getElementById("formStatus");
-  
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-    
-      statusEl.textContent = "Sending...";
-    
-      const payload = {
-        name: document.getElementById("name").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-        service: document.getElementById("service").value,
-        message: document.getElementById("message").value.trim()
-      };
-    
-      // DEBUG (temporary)
-      console.log("Sending payload:", payload);
-    
-      try {
-  const result = await resend.emails.send({
-    from: process.env.MAIL_FROM,
-    to: process.env.MAIL_TO,
-    replyTo: email,
-    subject: `New Quote Request: ${name}`,
-    text:
-      `Name: ${name}\n` +
-      `Email: ${email}\n` +
-      `Phone: ${phone}\n` +
-      `Project Type: ${service || "(not selected)"}\n\n` +
-      `Message:\n${message || "(no details provided)"}`
-  });
-      
-  // result usually contains an id
-  return sendJson(res, 200, { ok: true, id: result?.data?.id || result?.id || null });
-} catch (err) {
-  console.error("RESEND ERROR:", err);
-  return sendJson(res, 500, { ok: false, error: err?.message || "Email failed" });
-}
-    
-  </script>
+  <script src="./Scripts/smooth-navigation.js" defer></script>
+  <script src="./Scripts/script.js" defer></script>
+  <script src="./Scripts/user-friendly-popups.js" defer></script>
+  <script src="./Scripts/modern-animations.js" defer></script>
+
+  <!-- AI Assistant -->
+  <div class="ai-assistant">
+    <button class="ai-assistant-button" id="aiAssistantButton" aria-label="Open AI Assistant">
+      👷🏻‍♂️
+    </button>
+    <div class="ai-assistant-window" id="aiAssistantWindow">
+      <div class="ai-assistant-header">
+        <h3>👷🏻‍♂️ AI Assistant</h3>
+        <button class="ai-assistant-close" id="aiAssistantClose" aria-label="Close">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <div class="ai-assistant-messages" id="aiAssistantMessages"></div>
+      <div class="ai-quick-actions">
+        <button class="ai-quick-action">Get a free estimate</button>
+        <button class="ai-quick-action">Our services</button>
+        <button class="ai-quick-action">Contact info</button>
+      </div>
+      <div class="ai-assistant-input-area">
+        <input type="text" class="ai-assistant-input" id="aiAssistantInput" placeholder="Ask me anything..." />
+        <button class="ai-assistant-send" id="aiAssistantSend">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <script src="./Scripts/ai-assistant.js"></script>
 
 </body>
 </html>
