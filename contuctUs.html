@@ -408,10 +408,7 @@
           
           if (isLocalhost) {
             // Mock successful response for localhost testing
-            console.log('Localhost mode: Simulating successful API response');
             data = { ok: true, id: 'test-id', autoReplyOk: true };
-            
-            // Simulate delay
             await new Promise(resolve => setTimeout(resolve, 500));
           } else {
             // Real API call for production
@@ -422,7 +419,8 @@
             });
 
             if (!res.ok) {
-              throw new Error(`HTTP error! status: ${res.status}`);
+              const errorData = await res.json().catch(() => ({}));
+              throw new Error(errorData.error || `HTTP error! status: ${res.status}`);
             }
 
             data = await res.json();
@@ -431,14 +429,14 @@
           // Check if backend successfully sent the email
           if (data && data.ok === true) {
             // Redirect to thank you page after successful email send
-            window.location.replace("./redirected2.html");
-            return;
+            window.location.href = "./redirected2.html";
           } else {
             statusEl.textContent = data.error || "Something went wrong. Please try again.";
             statusEl.style.color = "#ef4444";
           }
         } catch (error) {
-          statusEl.textContent = "Network error. Please try again.";
+          console.error("Form submission error:", error);
+          statusEl.textContent = error.message || "Network error. Please try again.";
           statusEl.style.color = "#ef4444";
         }
       });
