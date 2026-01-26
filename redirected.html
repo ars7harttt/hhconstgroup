@@ -28,21 +28,14 @@
   <!-- Styles & Icons -->
   <link rel="icon" type="image/x-icon" href="./Images/logo-icon.PNG">
   <link rel="stylesheet" href="./Styles/redirected.css">
-  <link rel="stylesheet" href="./Styles/style.css">
   <link rel="icon" href="/favicon.ico">
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  />
 </head>
 <body>
 
   <!-- ===================== HEADER ===================== -->
   <header class="site-header">
     <div class="container header-inner">
-      <a href="./index.html" class="logo">
+      <a href="./homePage.html" class="logo">
         <img src="./Images/logo.png" alt="HH Construction Group Inc. logo" />
       </a>
 
@@ -54,7 +47,7 @@
 
       <nav class="main-nav">
         <ul>
-          <li><a href="./index.html">Home</a></li>
+          <li><a href="./homePage.html">Home</a></li>
           <li><a href="./aboutPage.html">About</a></li>
           <li><a href="./contuctUs.html">Contact</a></li>
         </ul>
@@ -67,7 +60,7 @@
       <h1>Thank You!</h1>
       <p>Your message has been received.<br>We will contact you soon.</p>
 
-      <a href="./index.html" class="home-btn">Return Home</a>
+      <a href="./homePage.html" class="home-btn">Return Home</a>
     </div>
   </div>
 
@@ -78,34 +71,6 @@
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
-
-  <!-- AI Assistant -->
-  <div class="ai-assistant">
-    <button class="ai-assistant-button" id="aiAssistantButton" aria-label="Open AI Assistant">
-      👷🏻‍♂️
-    </button>
-    <div class="ai-assistant-window" id="aiAssistantWindow">
-      <div class="ai-assistant-header">
-        <h3>👷🏻‍♂️ AI Assistant</h3>
-        <button class="ai-assistant-close" id="aiAssistantClose" aria-label="Close">
-          <i class="fa-solid fa-times"></i>
-        </button>
-      </div>
-      <div class="ai-assistant-messages" id="aiAssistantMessages"></div>
-      <div class="ai-quick-actions">
-        <button class="ai-quick-action">Get a free estimate</button>
-        <button class="ai-quick-action">Our services</button>
-        <button class="ai-quick-action">Contact info</button>
-      </div>
-      <div class="ai-assistant-input-area">
-        <input type="text" class="ai-assistant-input" id="aiAssistantInput" placeholder="Ask me anything..." />
-        <button class="ai-assistant-send" id="aiAssistantSend">
-          <i class="fa-solid fa-paper-plane"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-  <script src="./Scripts/ai-assistant.js"></script>
 
 </body>
 </html>
