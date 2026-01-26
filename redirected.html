@@ -27,16 +27,23 @@
 
   <!-- Styles & Icons -->
   <link rel="icon" type="image/x-icon" href="./Images/logo-icon.PNG">
+  <link rel="stylesheet" href="./Styles/style.css">
   <link rel="stylesheet" href="./Styles/redirected.css">
   <link rel="icon" href="/favicon.ico">
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
 </head>
-<body>
+<body class="redirected-page">
 
   <!-- ===================== HEADER ===================== -->
   <header class="site-header">
     <div class="container header-inner">
-      <a href="./homePage.html" class="logo">
-        <img src="./Images/logo.png" alt="HH Construction Group Inc. logo" />
+      <a href="./index.html" class="logo" aria-label="HH Construction Group Inc. - Los Angeles General Contractor">
+        <img src="./Images/logo.png" alt="HH Construction Group Inc. logo" width="150" height="60" />
       </a>
 
       <button class="nav-toggle" aria-label="Toggle navigation">
@@ -47,7 +54,7 @@
 
       <nav class="main-nav">
         <ul>
-          <li><a href="./homePage.html">Home</a></li>
+          <li><a href="./index.html">Home</a></li>
           <li><a href="./aboutPage.html">About</a></li>
           <li><a href="./contuctUs.html">Contact</a></li>
         </ul>
@@ -60,14 +67,29 @@
       <h1>Thank You!</h1>
       <p>Your message has been received.<br>We will contact you soon.</p>
 
-      <a href="./homePage.html" class="home-btn">Return Home</a>
+      <a href="./index.html" class="btn btn-primary">Return Home</a>
     </div>
   </div>
 
   <footer class="site-footer">
-    <p>&copy; <span id="year"></span> HH Construction Group Inc. All Rights Reserved.</p>
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <p class="footer-logo">HH Construction Group Inc.</p>
+        <p class="footer-copy">
+          &copy; <span id="year"></span> HH Construction Group Inc. All rights reserved.
+        </p>
+      </div>
+
+      <div class="footer-right">
+        <div class="social-icons">
+          <a href="https://www.instagram.com/hhconstructiongrp?igsh=NTc4MTIwNjQ2YQ==" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61582809487013" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+        </div>
+      </div>
+    </div>
   </footer>
 
+  <script src="./Scripts/script.js"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
