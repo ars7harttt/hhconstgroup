@@ -2,70 +2,41 @@ const { Resend } = require("resend");
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+function sendJson(res, status, obj) {
+  res.statusCode = status;
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(obj));
+}
+
 module.exports = async (req, res) => {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.statusCode = 200;
-    res.end();
-    return;
-  }
-
   if (req.method !== "POST") {
-    res.statusCode = 405;
-    res.setHeader("Content-Type", "application/json");
     res.setHeader("Allow", "POST");
-    res.end(JSON.stringify({ ok: false, error: "Method not allowed. Use POST." }));
-    return;
+    return sendJson(res, 405, { ok: false, error: "Use POST" });
   }
 
   let body = {};
   try {
     body = typeof req.body === "string" ? JSON.parse(req.body) : (req.body || {});
-  } catch (e) {
-    res.statusCode = 400;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ ok: false, error: "Invalid JSON" }));
-    return;
+  } catch {
+    return sendJson(res, 400, { ok: false, error: "Invalid JSON" });
   }
 
   const { name, email, phone, service, message, website } = body;
 
-  if (website) {
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ ok: true }));
-    return;
-  }
+  if (website) return sendJson(res, 200, { ok: true });
 
   if (!name || !email || !phone) {
-    res.statusCode = 400;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ ok: false, error: "Name, email, and phone are required." }));
-    return;
+    return sendJson(res, 400, { ok: false, error: "Name, email, and phone are required." });
   }
 
-  if (!process.env.RESEND_API_KEY) {
-    res.statusCode = 500;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ ok: false, error: "Server configuration error" }));
-    return;
-  }
-  
-  if (!process.env.MAIL_FROM || !process.env.MAIL_TO) {
-    res.statusCode = 500;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ ok: false, error: "Server configuration error" }));
-    return;
-  }
+  if (!process.env.RESEND_API_KEY) return sendJson(res, 500, { ok: false, error: "Missing RESEND_API_KEY" });
+  if (!process.env.MAIL_FROM) return sendJson(res, 500, { ok: false, error: "Missing MAIL_FROM" });
+  if (!process.env.MAIL_TO) return sendJson(res, 500, { ok: false, error: "Missing MAIL_TO" });
 
   // IMPORTANT: Use a hardcoded trusted sender for auto-reply.
+  // Do NOT store "HH Construction Group <...>" in env vars.
   const LEAD_FROM = `HH Construction Group <${process.env.MAIL_FROM}>`;
-  const AUTO_FROM = `HH Construction Group <contact@hhconstructions.net>`;
+  const AUTO_FROM = `HH Construction Group <contact@hhconstructions.net>`; // trusted sender
 
   try {
     // 1) Lead email (to you)
@@ -83,56 +54,57 @@ module.exports = async (req, res) => {
     });
 
     if (lead?.error) {
-      res.statusCode = 500;
-      res.setHeader("Content-Type", "application/json");
-      res.end(JSON.stringify({
+      return sendJson(res, 500, {
         ok: false,
-        error: lead.error.message || "Lead email failed"
-      }));
-      return;
+        error: lead.error.message || "Lead email failed",
+        leadError: lead.error
+      });
     }
 
     const leadId = lead?.data?.id || null;
     if (!leadId) {
-      res.statusCode = 500;
-      res.setHeader("Content-Type", "application/json");
-      res.end(JSON.stringify({ ok: false, error: "Email service error" }));
-      return;
+      return sendJson(res, 500, { ok: false, error: "Lead email missing id", leadRaw: lead });
     }
 
-    // 2) Auto-reply (to customer)
+    // 2) Auto-reply (to customer) — capture result
     const auto = await resend.emails.send({
       from: AUTO_FROM,
       to: email,
       replyTo: process.env.MAIL_TO,
-      subject: "We've Received Your Request — HH Construction Group Inc ✅",
+      subject: "We’ve Received Your Request — HH Construction Group Inc ✅",
       text:
         `Hi ${name},\n\n` +
         `Thank you for contacting HH Construction Group Inc.\n\n` +
-        `We've successfully received your request and appreciate you taking the time to reach out. ` +
+        `We’ve successfully received your request and appreciate you taking the time to reach out. ` +
         `A member of our team will review your project details and contact you shortly to discuss next steps.\n\n` +
-        `If you have additional information, photos, or questions you'd like to share in the meantime, ` +
+        `If you have additional information, photos, or questions you’d like to share in the meantime, ` +
         `feel free to reply directly to this email.\n\n` +
         `We look forward to working with you.\n\n` +
         `Best regards,\n` +
         `HH Construction Group Inc.\n`
     });
 
-    const autoId = auto?.data?.id || null;
-    const autoReplyOk = !auto?.error;
+    // Return auto-reply status to you so we can see why it fails
+    if (auto?.error) {
+      return sendJson(res, 200, {
+        ok: true,
+        id: leadId,
+        autoReplyOk: false,
+        autoReplyError: auto.error.message || "Auto-reply failed",
+        autoReplyErrorObj: auto.error
+      });
+    }
 
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({
+    const autoId = auto?.data?.id || null;
+
+    return sendJson(res, 200, {
       ok: true,
       id: leadId,
-      autoReplyOk: autoReplyOk,
+      autoReplyOk: true,
       autoReplyId: autoId
-    }));
+    });
 
   } catch (err) {
-    res.statusCode = 500;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ ok: false, error: err?.message || "Server error" }));
+    return sendJson(res, 500, { ok: false, error: err?.message || "Server error" });
   }
 };
