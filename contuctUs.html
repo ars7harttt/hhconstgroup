@@ -401,22 +401,37 @@
         };
   
         try {
-          const res = await fetch("/api/contact", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
+          // Check if running on localhost (for testing)
+          const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+          
+          let res, data;
+          
+          if (isLocalhost) {
+            // Mock successful response for localhost testing
+            console.log('Localhost mode: Simulating successful API response');
+            data = { ok: true, id: 'test-id', autoReplyOk: true };
+            
+            // Simulate delay
+            await new Promise(resolve => setTimeout(resolve, 500));
+          } else {
+            // Real API call for production
+            res = await fetch("/api/contact", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
 
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
+            if (!res.ok) {
+              throw new Error(`HTTP error! status: ${res.status}`);
+            }
+
+            data = await res.json();
           }
-
-          const data = await res.json();
 
           // Check if backend successfully sent the email
           if (data && data.ok === true) {
             // Redirect to thank you page after successful email send
-            window.location.replace("./redirected.html");
+            window.location.replace("./redirected2.html");
             return;
           } else {
             statusEl.textContent = data.error || "Something went wrong. Please try again.";
