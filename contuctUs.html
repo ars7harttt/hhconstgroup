@@ -196,13 +196,18 @@
   <script src="./Scripts/script.js"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
+    (function() {
       const form = document.getElementById("contactForm");
+      if (!form) return;
+      
       const statusEl = document.getElementById("formStatus");
-  
+      
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
+        e.stopPropagation();
+        
         statusEl.textContent = "Sending...";
+        statusEl.style.color = "";
   
         const payload = {
           name: document.getElementById("name").value.trim(),
@@ -218,14 +223,14 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           });
-
+  
           if (!res.ok) {
             const errorData = await res.json().catch(() => ({}));
             throw new Error(errorData.error || `HTTP error! status: ${res.status}`);
           }
-
+  
           const data = await res.json();
-
+  
           if (data && data.ok === true) {
             // Redirect immediately on success - use replace to bypass smooth navigation
             window.location.replace("./redirected.html");
@@ -239,7 +244,7 @@
           statusEl.style.color = "#ef4444";
         }
       });
-    });
+    })();
   </script>
 
   <script src="./Scripts/smooth-navigation.js" defer></script>
