@@ -36,6 +36,7 @@ body {
 html {
   scroll-behavior: smooth;
   background: radial-gradient(circle at top, #111111 0, #000 45%, #000 100%);
+  background-color: #000000; /* Fallback solid color */
   min-height: 100vh;
   min-height: 100dvh;
   width: 100%;
@@ -45,6 +46,7 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: radial-gradient(circle at top, #111111 0, #000 45%, #000 100%);
   background-attachment: fixed;
+  background-color: #000000; /* Fallback solid color */
   color: var(--color-text);
   line-height: 1.6;
   min-height: 100vh;
@@ -52,6 +54,7 @@ body {
   transition: opacity 0.3s ease;
   width: 100%;
   position: relative;
+  opacity: 1; /* Ensure body is visible by default */
 }
 
 /* Smooth page transitions */
@@ -115,8 +118,10 @@ body.page-transitioning main {
   left: 0;
   right: 0;
   z-index: 50;
+  -webkit-backdrop-filter: blur(18px); /* Safari prefix */
   backdrop-filter: blur(18px);
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.96), rgba(0, 0, 0, 0.9));
+  background-color: rgba(0, 0, 0, 0.95); /* Fallback for browsers without backdrop-filter */
   border-bottom: 1px solid rgba(212, 175, 55, 0.3);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateY(0);
