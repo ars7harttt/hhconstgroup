@@ -804,7 +804,6 @@ p.animate-in {
 
 .page-hero {
   padding: 3rem 0 2rem;
-  padding-top: calc(80px + 3rem); /* Account for fixed header */
   border-bottom: 1px solid rgba(212, 175, 55, 0.35);
   background: radial-gradient(circle at top, rgba(255, 255, 255, 0.05), transparent);
 }
@@ -1197,10 +1196,6 @@ p.animate-in {
 @media (max-width: 720px) {
   main {
     padding-top: 64px; /* Adjust for smaller mobile header */
-  }
-  
-  .page-hero {
-    padding-top: calc(64px + 2rem); /* Adjust for smaller mobile header */
   }
   
   .header-inner {
