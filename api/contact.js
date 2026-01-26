@@ -5,10 +5,23 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 function sendJson(res, status, obj) {
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   res.end(JSON.stringify(obj));
 }
 
 module.exports = async (req, res) => {
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.statusCode = 200;
+    res.end();
+    return;
+  }
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return sendJson(res, 405, { ok: false, error: "Use POST" });
